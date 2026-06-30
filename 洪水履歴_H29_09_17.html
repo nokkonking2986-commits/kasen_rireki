@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+
+<html lang="ja">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>洪水履歴 H29.09.17</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: "Hiragino Kaku Gothic ProN", "Noto Sans CJK JP", sans-serif; background: #1a1f2e; color: #d0d8f0; font-size: 13px; }
+  .header { background: linear-gradient(135deg, #1e3a6e 0%, #0d2140 100%); padding: 16px 20px; border-bottom: 2px solid #2a4a8a; }
+  .header h1 { font-size: 18px; color: #7ab3ff; font-weight: bold; margin-bottom: 4px; }
+  .header .meta { font-size: 12px; color: #8899cc; }
+  .header .peak-info { margin-top: 8px; font-size: 12px; color: #ffcc44; }
+  .tabs { display: flex; background: #151a28; border-bottom: 2px solid #2a4a8a; }
+  .tab { padding: 12px 20px; cursor: pointer; color: #6677aa; font-size: 13px; border-bottom: 3px solid transparent; transition: all 0.2s; user-select: none; }
+  .tab.active { color: #7ab3ff; border-bottom-color: #4488ff; background: #1a2540; }
+  .tab:hover:not(.active) { color: #99aacc; background: #1c2235; }
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+  .table-wrap { overflow-x: auto; padding: 12px; max-height: calc(100vh - 130px); overflow-y: auto; }
+  table { border-collapse: collapse; white-space: nowrap; font-size: 12px; }
+  th, td { border: 1px solid #2a3a5a; padding: 4px 8px; text-align: right; }
+  th { background: #1e3060; color: #99bbee; font-weight: bold; text-align: center; position: sticky; top: 0; z-index: 2; }
+  th.group-header { background: #162550; font-size: 11px; }
+  td.time-cell { text-align: left; font-weight: bold; color: #aabbee; font-family: monospace; min-width: 80px; }
+  td.rain-cell { color: #88ddff; }
+  td.sub { color: #8899cc; font-size: 11px; }
+  td.flow-cell { color: #aaffcc; }
+  tr.first330-row td { background: #1a4fa0; color: #fff; }
+  tr.first330-row td.sub { color: #aaccff; }
+  tr.first330-row td.rain-cell { color: #88ddff; }
+  tr.date-sep td { background: #0d1525; color: #4466aa; font-size: 11px; text-align: left; padding: 3px 10px; border-color: #1a2a44; }
+  .badge330 { background: #4488ff; color: #fff; font-size: 10px; padding: 1px 5px; border-radius: 3px; margin-left: 4px; }
+  .legend { padding: 6px 12px; font-size: 11px; color: #6677aa; border-bottom: 1px solid #1e2a40; display: flex; gap: 16px; flex-wrap: wrap; }
+  .legend-item { display: flex; align-items: center; gap: 5px; }
+  .dot { width: 10px; height: 10px; border-radius: 2px; display: inline-block; background: #1a4fa0; }
+  .pdf-wrap { padding: 12px; height: calc(100vh - 130px); }
+  .pdf-wrap iframe { width: 100%; height: 100%; border: none; border-radius: 4px; }
+
+#tab-table { display: block !important; }
+.tab-content { display: none; }
+</style>
+</head>
+<body>
+<div class="header">
+<h1>📋 H29.09.17（2017年9月17〜18日）洪水履歴</h1>
+
+<div class="peak-info">流入量MAX: 2,089.38 m³/s（9/18 3:18）／ 累計雨量: 96.3 mm ／ 台風18号</div>
+</div>
+
+<div class="tab-content active" id="tab-table" style="display:block;">
+<div class="legend">
+<div class="legend-item"><div class="dot"></div><span>330m³/s到達行</span></div>
+<div class="legend-item" style="color:#8899cc;">表示期間: 330到達6h前（17:20）〜 330到達（23:20）※17:20以前のデータなし、18:20から表示</div>
+</div>
+<div class="table-wrap">
+<table>
+<thead>
+<tr>
+<th rowspan="2">時刻</th>
+<th class="group-header" colspan="3">雨量（mm）</th>
+<th rowspan="2">大堰上流<br/>水位<br/>(T.P.m)</th>
+<th rowspan="2">流入量<br/>(m³/s)</th>
+<th class="group-header" colspan="2">大島</th>
+<th class="group-header" colspan="2">別所橋</th>
+<th class="group-header" colspan="2">万願寺</th>
+<th class="group-header" colspan="2">板波</th>
+<th class="group-header" colspan="2">船町</th>
+</tr>
+<tr>
+<th>1h</th><th>6h</th><th>累計</th>
+<th>水位(m)</th><th>流量(m³/s)</th>
+<th>水位(m)</th><th>流量(m³/s)</th>
+<th>水位(m)</th><th>流量(m³/s)</th>
+<th>水位(m)</th><th>流量(m³/s)</th>
+<th>水位(m)</th><th>流量(m³/s)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="date-sep"><td colspan="16">📅 9月17日（日）</td></tr>
+<tr>
+<td class="time-cell">18:20</td><td class="rain-cell" rowspan="4">3.6</td><td class="rain-cell" rowspan="4">3.9</td><td class="rain-cell" rowspan="4">3.9</td>
+<td>12.55</td><td class="flow-cell">40.19</td>
+<td class="sub">-1.65</td><td class="flow-cell">25.34</td>
+<td class="sub">0.07</td><td class="flow-cell">3.38</td>
+<td class="sub">1.04</td><td class="flow-cell">2.42</td>
+<td class="sub">-0.39</td><td class="flow-cell">31.33</td>
+<td class="sub">0.02</td><td class="flow-cell">20.76</td>
+</tr>
+<tr>
+<td class="time-cell">18:30</td>
+<td>12.53</td><td class="flow-cell">41.49</td>
+<td class="sub">-1.65</td><td class="flow-cell">25.34</td>
+<td class="sub">0.07</td><td class="flow-cell">3.38</td>
+<td class="sub">1.04</td><td class="flow-cell">2.42</td>
+<td class="sub">-0.39</td><td class="flow-cell">31.33</td>
+<td class="sub">0.02</td><td class="flow-cell">20.76</td>
+</tr>
+<tr>
+<td class="time-cell">18:40</td>
+<td>12.54</td><td class="flow-cell">41.26</td>
+<td class="sub">-1.66</td><td class="flow-cell">24.47</td>
+<td class="sub">0.07</td><td class="flow-cell">3.38</td>
+<td class="sub">1.05</td><td class="flow-cell">2.56</td>
+<td class="sub">-0.39</td><td class="flow-cell">31.33</td>
+<td class="sub">0.03</td><td class="flow-cell">22.03</td>
+</tr>
+<tr>
+<td class="time-cell">18:50</td>
+<td>12.53</td><td class="flow-cell">42.20</td>
+<td class="sub">-1.66</td><td class="flow-cell">24.47</td>
+<td class="sub">0.08</td><td class="flow-cell">3.72</td>
+<td class="sub">1.06</td><td class="flow-cell">2.71</td>
+<td class="sub">-0.39</td><td class="flow-cell">31.33</td>
+<td class="sub">0.03</td><td class="flow-cell">22.03</td>
+</tr>
+<tr>
+<td class="time-cell">19:00</td><td class="rain-cell" rowspan="6">3.3</td><td class="rain-cell" rowspan="6">7.3</td><td class="rain-cell" rowspan="6">7.3</td>
+<td>12.53</td><td class="flow-cell">37.70</td>
+<td class="sub">-1.66</td><td class="flow-cell">24.47</td>
+<td class="sub">0.08</td><td class="flow-cell">3.72</td>
+<td class="sub">1.06</td><td class="flow-cell">2.71</td>
+<td class="sub">-0.39</td><td class="flow-cell">31.33</td>
+<td class="sub">0.03</td><td class="flow-cell">22.03</td>
+</tr>
+<tr>
+<td class="time-cell">19:10</td>
+<td>12.51</td><td class="flow-cell">37.85</td>
+<td class="sub">-1.66</td><td class="flow-cell">24.47</td>
+<td class="sub">0.09</td><td class="flow-cell">4.09</td>
+<td class="sub">1.07</td><td class="flow-cell">2.85</td>
+<td class="sub">-0.39</td><td class="flow-cell">31.33</td>
+<td class="sub">0.03</td><td class="flow-cell">22.03</td>
+</tr>
+<tr>
+<td class="time-cell">19:20</td>
+<td>12.50</td><td class="flow-cell">31.73</td>
+<td class="sub">-1.65</td><td class="flow-cell">25.34</td>
+<td class="sub">0.09</td><td class="flow-cell">4.09</td>
+<td class="sub">1.07</td><td class="flow-cell">2.85</td>
+<td class="sub">-0.38</td><td class="flow-cell">32.32</td>
+<td class="sub">0.03</td><td class="flow-cell">22.03</td>
+</tr>
+<tr>
+<td class="time-cell">19:30</td>
+<td>12.50</td><td class="flow-cell">33.75</td>
+<td class="sub">-1.65</td><td class="flow-cell">25.34</td>
+<td class="sub">0.09</td><td class="flow-cell">4.09</td>
+<td class="sub">1.08</td><td class="flow-cell">3.01</td>
+<td class="sub">-0.38</td><td class="flow-cell">32.32</td>
+<td class="sub">0.04</td><td class="flow-cell">23.35</td>
+</tr>
+<tr>
+<td class="time-cell">19:40</td>
+<td>12.49</td><td class="flow-cell">31.67</td>
+<td class="sub">-1.65</td><td class="flow-cell">25.34</td>
+<td class="sub">0.10</td><td class="flow-cell">4.47</td>
+<td class="sub">1.09</td><td class="flow-cell">3.16</td>
+<td class="sub">-0.37</td><td class="flow-cell">33.32</td>
+<td class="sub">0.04</td><td class="flow-cell">23.35</td>
+</tr>
+<tr>
+<td class="time-cell">19:50</td>
+<td>12.48</td><td class="flow-cell">28.78</td>
+<td class="sub">-1.64</td><td class="flow-cell">26.22</td>
+<td class="sub">0.13</td><td class="flow-cell">5.71</td>
+<td class="sub">1.11</td><td class="flow-cell">3.49</td>
+<td class="sub">-0.36</td><td class="flow-cell">34.34</td>
+<td class="sub">0.05</td><td class="flow-cell">24.70</td>
+</tr>
+<tr>
+<td class="time-cell">20:00</td><td class="rain-cell" rowspan="6">9.4</td><td class="rain-cell" rowspan="6">16.7</td><td class="rain-cell" rowspan="6">16.7</td>
+<td>12.46</td><td class="flow-cell">27.09</td>
+<td class="sub">-1.63</td><td class="flow-cell">27.12</td>
+<td class="sub">0.14</td><td class="flow-cell">6.16</td>
+<td class="sub">1.13</td><td class="flow-cell">3.83</td>
+<td class="sub">-0.35</td><td class="flow-cell">35.37</td>
+<td class="sub">0.06</td><td class="flow-cell">26.09</td>
+</tr>
+<tr>
+<td class="time-cell">20:10</td>
+<td>12.47</td><td class="flow-cell">26.32</td>
+<td class="sub">-1.63</td><td class="flow-cell">27.12</td>
+<td class="sub">0.16</td><td class="flow-cell">7.10</td>
+<td class="sub">1.16</td><td class="flow-cell">4.36</td>
+<td class="sub">-0.34</td><td class="flow-cell">36.42</td>
+<td class="sub">0.07</td><td class="flow-cell">27.52</td>
+</tr>
+<tr>
+<td class="time-cell">20:20</td>
+<td>12.47</td><td class="flow-cell">29.46</td>
+<td class="sub">-1.62</td><td class="flow-cell">28.03</td>
+<td class="sub">0.18</td><td class="flow-cell">8.12</td>
+<td class="sub">1.18</td><td class="flow-cell">4.74</td>
+<td class="sub">-0.33</td><td class="flow-cell">37.48</td>
+<td class="sub">0.08</td><td class="flow-cell">28.99</td>
+</tr>
+<tr>
+<td class="time-cell">20:30</td>
+<td>12.45</td><td class="flow-cell">26.29</td>
+<td class="sub">-1.62</td><td class="flow-cell">28.03</td>
+<td class="sub">0.19</td><td class="flow-cell">8.65</td>
+<td class="sub">1.22</td><td class="flow-cell">5.55</td>
+<td class="sub">-0.32</td><td class="flow-cell">38.56</td>
+<td class="sub">0.09</td><td class="flow-cell">30.50</td>
+</tr>
+<tr>
+<td class="time-cell">20:40</td>
+<td>12.49</td><td class="flow-cell">29.58</td>
+<td class="sub">-1.61</td><td class="flow-cell">28.95</td>
+<td class="sub">0.22</td><td class="flow-cell">10.35</td>
+<td class="sub">1.29</td><td class="flow-cell">7.11</td>
+<td class="sub">-0.28</td><td class="flow-cell">43.03</td>
+<td class="sub">0.11</td><td class="flow-cell">33.62</td>
+</tr>
+<tr>
+<td class="time-cell">20:50</td>
+<td>12.51</td><td class="flow-cell">38.70</td>
+<td class="sub">-1.59</td><td class="flow-cell">30.85</td>
+<td class="sub">0.25</td><td class="flow-cell">12.19</td>
+<td class="sub">1.39</td><td class="flow-cell">9.68</td>
+<td class="sub">-0.23</td><td class="flow-cell">48.95</td>
+<td class="sub">0.13</td><td class="flow-cell">36.90</td>
+</tr>
+<tr>
+<td class="time-cell">21:00</td><td class="rain-cell" rowspan="6">26.9</td><td class="rain-cell" rowspan="6">43.6</td><td class="rain-cell" rowspan="6">43.6</td>
+<td>12.54</td><td class="flow-cell">45.26</td>
+<td class="sub">-1.56</td><td class="flow-cell">33.81</td>
+<td class="sub">0.29</td><td class="flow-cell">14.90</td>
+<td class="sub">1.52</td><td class="flow-cell">13.61</td>
+<td class="sub">-0.17</td><td class="flow-cell">56.57</td>
+<td class="sub">0.16</td><td class="flow-cell">42.10</td>
+</tr>
+<tr>
+<td class="time-cell">21:10</td>
+<td>12.59</td><td class="flow-cell">57.58</td>
+<td class="sub">-1.52</td><td class="flow-cell">37.97</td>
+<td class="sub">0.35</td><td class="flow-cell">19.46</td>
+<td class="sub">1.71</td><td class="flow-cell">20.56</td>
+<td class="sub">-0.13</td><td class="flow-cell">61.96</td>
+<td class="sub">0.19</td><td class="flow-cell">47.65</td>
+</tr>
+<tr>
+<td class="time-cell">21:20</td>
+<td>12.60</td><td class="flow-cell">66.69</td>
+<td class="sub">-1.48</td><td class="flow-cell">42.37</td>
+<td class="sub">0.44</td><td class="flow-cell">29.43</td>
+<td class="sub">1.90</td><td class="flow-cell">28.93</td>
+<td class="sub">-0.08</td><td class="flow-cell">69.03</td>
+<td class="sub">0.23</td><td class="flow-cell">55.58</td>
+</tr>
+<tr>
+<td class="time-cell">21:30</td>
+<td>12.62</td><td class="flow-cell">77.28</td>
+<td class="sub">-1.42</td><td class="flow-cell">49.42</td>
+<td class="sub">0.55</td><td class="flow-cell">44.83</td>
+<td class="sub">2.16</td><td class="flow-cell">42.70</td>
+<td class="sub">-0.02</td><td class="flow-cell">78.03</td>
+<td class="sub">0.28</td><td class="flow-cell">66.35</td>
+</tr>
+<tr>
+<td class="time-cell">21:40</td>
+<td>12.64</td><td class="flow-cell">87.47</td>
+<td class="sub">-1.35</td><td class="flow-cell">58.33</td>
+<td class="sub">0.60</td><td class="flow-cell">52.89</td>
+<td class="sub">2.58</td><td class="flow-cell">70.58</td>
+<td class="sub">0.08</td><td class="flow-cell">94.24</td>
+<td class="sub">0.34</td><td class="flow-cell">80.53</td>
+</tr>
+<tr>
+<td class="time-cell">21:50</td>
+<td>12.67</td><td class="flow-cell">95.81</td>
+<td class="sub">-1.26</td><td class="flow-cell">70.87</td>
+<td class="sub">0.60</td><td class="flow-cell">52.89</td>
+<td class="sub">2.91</td><td class="flow-cell">97.39</td>
+<td class="sub">0.20</td><td class="flow-cell">115.72</td>
+<td class="sub">0.42</td><td class="flow-cell">101.57</td>
+</tr>
+<tr>
+<td class="time-cell">22:00</td><td class="rain-cell" rowspan="6">39.0</td><td class="rain-cell" rowspan="6">82.6</td><td class="rain-cell" rowspan="6">82.6</td>
+<td>12.69</td><td class="flow-cell">112.15</td>
+<td class="sub">-1.05</td><td class="flow-cell">104.88</td>
+<td class="sub">0.71</td><td class="flow-cell">72.97</td>
+<td class="sub">3.10</td><td class="flow-cell">114.77</td>
+<td class="sub">0.36</td><td class="flow-cell">147.79</td>
+<td class="sub">0.50</td><td class="flow-cell">125.05</td>
+</tr>
+<tr>
+<td class="time-cell">22:10</td>
+<td>12.70</td><td class="flow-cell">57.43</td>
+<td class="sub">-0.76</td><td class="flow-cell">162.76</td>
+<td class="sub">0.97</td><td class="flow-cell">133.25</td>
+<td class="sub">3.28</td><td class="flow-cell">132.55</td>
+<td class="sub">0.54</td><td class="flow-cell">188.54</td>
+<td class="sub">0.62</td><td class="flow-cell">164.85</td>
+</tr>
+<tr>
+<td class="time-cell">22:20</td>
+<td>12.71</td><td class="flow-cell">71.80</td>
+<td class="sub">-0.53</td><td class="flow-cell">217.67</td>
+<td class="sub">0.91</td><td class="flow-cell">117.74</td>
+<td class="sub">3.49</td><td class="flow-cell">154.92</td>
+<td class="sub">0.71</td><td class="flow-cell">231.58</td>
+<td class="sub">0.76</td><td class="flow-cell">218.22</td>
+</tr>
+<tr>
+<td class="time-cell">22:30</td>
+<td>12.71</td><td class="flow-cell">94.25</td>
+<td class="sub">-0.33</td><td class="flow-cell">271.91</td>
+<td class="sub">0.90</td><td class="flow-cell">115.25</td>
+<td class="sub">3.73</td><td class="flow-cell">182.61</td>
+<td class="sub">0.89</td><td class="flow-cell">281.97</td>
+<td class="sub">0.92</td><td class="flow-cell">288.36</td>
+</tr>
+<tr>
+<td class="time-cell">22:40</td>
+<td>12.75</td><td class="flow-cell">111.22</td>
+<td class="sub">-0.09</td><td class="flow-cell">344.94</td>
+<td class="sub">0.88</td><td class="flow-cell">110.34</td>
+<td class="sub">3.96</td><td class="flow-cell">211.29</td>
+<td class="sub">1.06</td><td class="flow-cell">334.12</td>
+<td class="sub">1.35</td><td class="flow-cell">459.68</td>
+</tr>
+<tr>
+<td class="time-cell">22:50</td>
+<td>12.81</td><td class="flow-cell">123.76</td>
+<td class="sub">0.17</td><td class="flow-cell">433.84</td>
+<td class="sub">0.86</td><td class="flow-cell">105.55</td>
+<td class="sub">4.09</td><td class="flow-cell">228.43</td>
+<td class="sub">1.23</td><td class="flow-cell">390.68</td>
+<td class="sub">1.39</td><td class="flow-cell">476.79</td>
+</tr>
+<tr>
+<td class="time-cell">23:00</td><td class="rain-cell" rowspan="3">10.6</td><td class="rain-cell" rowspan="3">93.0</td><td class="rain-cell" rowspan="3">93.3</td>
+<td>12.86</td><td class="flow-cell">177.85</td>
+<td class="sub">0.44</td><td class="flow-cell">536.95</td>
+<td class="sub">0.84</td><td class="flow-cell">100.86</td>
+<td class="sub">4.16</td><td class="flow-cell">237.93</td>
+<td class="sub">1.39</td><td class="flow-cell">447.96</td>
+<td class="sub">1.49</td><td class="flow-cell">520.91</td>
+</tr>
+<tr>
+<td class="time-cell">23:10</td>
+<td>12.94</td><td class="flow-cell">296.01</td>
+<td class="sub">0.69</td><td class="flow-cell">642.21</td>
+<td class="sub">0.86</td><td class="flow-cell">105.55</td>
+<td class="sub">4.19</td><td class="flow-cell">242.06</td>
+<td class="sub">1.56</td><td class="flow-cell">513.10</td>
+<td class="sub">1.64</td><td class="flow-cell">590.76</td>
+</tr>
+<tr class="first330-row">
+<td class="time-cell">23:20<span class="badge330">330</span></td>
+<td>13.03</td><td class="flow-cell">335.41</td>
+<td class="sub">0.92</td><td class="flow-cell">747.36</td>
+<td class="sub">0.95</td><td class="flow-cell">127.97</td>
+<td class="sub">4.16</td><td class="flow-cell">237.93</td>
+<td class="sub">1.72</td><td class="flow-cell">578.46</td>
+<td class="sub">1.83</td><td class="flow-cell">685.54</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+
+
+</body>
+</html>
