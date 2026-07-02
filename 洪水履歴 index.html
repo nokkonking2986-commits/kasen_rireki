@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>洪水履歴 インデックス</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: "Hiragino Kaku Gothic ProN","Noto Sans CJK JP",sans-serif; background: #1a1f2e; color: #d0d8f0; font-size: 13px; }
+
+.header { background: linear-gradient(135deg,#1e3a6e 0%,#0d2140 100%); padding: 12px 14px; border-bottom: 2px solid #2a4a8a; }
+.header h1 { font-size: 16px; color: #7ab3ff; font-weight: bold; }
+.header .sub { font-size: 11px; color: #6677aa; margin-top: 2px; }
+
+/* フィルターパネル */
+.filter-panel { background: #111827; border-bottom: 1px solid #1e2a40; padding: 12px 14px; display: flex; flex-direction: column; gap: 14px; }
+.filter-group { display: flex; flex-direction: column; gap: 6px; }
+.filter-label { font-size: 12px; color: #aabbdd; font-weight: bold; }
+.filter-note { font-size: 10px; color: #556688; line-height: 1.4; }
+
+/* 台風チェック */
+.checkbox-label { display: flex; align-items: center; gap: 8px; font-size: 14px; color: #aabbee; cursor: pointer; padding: 6px 0; }
+.checkbox-label input { accent-color: #4488ff; width: 22px; height: 22px; }
+
+/* セレクト2個横並び */
+.select-row { display: flex; align-items: center; gap: 10px; }
+.tilde { color: #88aacc; font-size: 16px; font-weight: bold; }
+select.range-sel {
+  background: #1a2a40;
+  color: #e0eaff;
+  border: 1px solid #2a4a8a;
+  border-radius: 8px;
+  padding: 0 8px;
+  font-size: 15px;
+  font-weight: bold;
+  height: 48px;
+  flex: 1;
+  max-width: 140px;
+  -webkit-appearance: none;
+  appearance: none;
+  text-align: center;
+}
+
+/* 無降雨日数ドロップダウン */
+select.dry-sel {
+  background: #1a2a40;
+  color: #d0d8f0;
+  border: 1px solid #2a4a8a;
+  border-radius: 8px;
+  padding: 0 10px;
+  font-size: 14px;
+  height: 48px;
+  width: 100%;
+  max-width: 220px;
+}
+
+.btn-reset { background: #1e3060; color: #88aaee; border: 1px solid #2a4a8a; border-radius: 8px; padding: 12px 24px; font-size: 13px; cursor: pointer; touch-action: manipulation; align-self: flex-start; }
+.btn-reset:active { background: #2a4a8a; }
+
+/* カウント */
+.count-bar { padding: 5px 14px; font-size: 11px; color: #6677aa; border-bottom: 1px solid #1e2a40; }
+.count-bar span { color: #aabbee; font-weight: bold; }
+
+/* テーブル */
+.table-wrap { overflow-x: auto; padding: 8px 4px; -webkit-overflow-scrolling: touch; }
+table { border-collapse: collapse; width: 100%; font-size: 11px; }
+th, td { border: 1px solid #2a3a5a; padding: 4px 5px; text-align: right; white-space: nowrap; }
+th { background: #1e3060; color: #99bbee; font-weight: bold; text-align: center; position: sticky; top: 0; z-index: 2; font-size: 10px; line-height: 1.3; }
+td.date-cell { text-align: left; font-weight: bold; font-family: monospace; color: #aabbee; font-size: 11px; }
+td.q-cell { color: #aaffcc; }
+td.rain-cell { color: #88ddff; }
+td.typhoon-cell { text-align: center; color: #ffaa44; }
+td.dry-cell { text-align: center; color: #cc99ff; }
+tr.has-html:hover { background: #1a2a44; cursor: pointer; }
+tr.no-html { opacity: 0.4; }
+tr.hidden { display: none; }
+
+.link-cell { text-align: center; padding: 3px 2px; }
+.link-cell a { display: inline-block; margin: 1px; padding: 3px 5px; border-radius: 3px; font-size: 9px; text-decoration: none; font-weight: bold; }
+.link-html   { background: #1e4a8a; color: #88ccff; border: 1px solid #2a5aaa; }
+.link-pdf-op { background: #2a3a1a; color: #aacc77; border: 1px solid #3a5a2a; }
+.link-pdf-fl { background: #3a2a1a; color: #ccaa77; border: 1px solid #5a4a2a; }
+.link-na { background: #1e2a3a; color: #445566; border: 1px solid #2a3a4a; pointer-events: none; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>📋 洪水履歴 インデックス</h1>
+  <div class="sub">条件はAND絞り込み</div>
+</div>
+
+<div class="filter-panel">
+
+  <!-- 台風 -->
+  <div class="filter-group">
+    <label class="checkbox-label">
+      <input type="checkbox" id="chk-typhoon"> 台風のみ表示
+    </label>
+  </div>
+
+  <!-- 6h雨量MAX -->
+  <div class="filter-group">
+    <div class="filter-label">6h雨量MAX (mm)</div>
+    <div class="select-row">
+      <select class="range-sel" id="sel-r6min"></select>
+      <span class="tilde">〜</span>
+      <select class="range-sel" id="sel-r6max"></select>
+    </div>
+  </div>
+
+  <!-- 累計雨量MAX -->
+  <div class="filter-group">
+    <div class="filter-label">累計雨量MAX (mm)</div>
+    <div class="select-row">
+      <select class="range-sel" id="sel-rcmin"></select>
+      <span class="tilde">〜</span>
+      <select class="range-sel" id="sel-rcmax"></select>
+    </div>
+  </div>
+
+  <!-- 降雨開始時の流入量 -->
+  <div class="filter-group">
+    <div class="filter-label">降雨開始時の流入量 (m³/s)</div>
+    <div class="select-row">
+      <select class="range-sel" id="sel-q0min"></select>
+      <span class="tilde">〜</span>
+      <select class="range-sel" id="sel-q0max"></select>
+    </div>
+    <div class="filter-note">※データ追加予定</div>
+  </div>
+
+  <!-- 無降雨日数 -->
+  <div class="filter-group">
+    <div class="filter-label">洪水前 無降雨日数</div>
+    <div class="filter-note">降雨が観測されるまで雨が降っていなかった日数</div>
+    <select class="dry-sel" id="sel-dry">
+      <option value="">すべて</option>
+      <option value="0">0日以下</option>
+      <option value="1">1日以下</option>
+      <option value="2">2日以下</option>
+      <option value="3">3日以下</option>
+      <option value="5">5日以下</option>
+      <option value="10">10日以下</option>
+      <option value="20">20日以下</option>
+    </select>
+  </div>
+
+  <button class="btn-reset" onclick="resetFilters()">リセット</button>
+</div>
+
+<div class="count-bar">表示: <span id="count">―</span> / <span id="total">―</span> 件</div>
+
+<div class="table-wrap">
+<table>
+  <thead>
+    <tr>
+      <th>日付</th>
+      <th>流入量MAX<br>m³/s</th>
+      <th>6h雨量<br>mm</th>
+      <th>累計<br>mm</th>
+      <th>台風</th>
+      <th>無降雨<br>日</th>
+      <th>リンク</th>
+    </tr>
+  </thead>
+  <tbody id="tbody"></tbody>
+</table>
+</div>
+
+<script>
+const BASE = 'https://nokkonking2986-commits.github.io/kasen_rireki/';
+
+const AVAILABLE_HTML = new Set([
+  '洪水履歴_H28_04_13.html',
+  '洪水履歴_H28_05_16.html',
+  '洪水履歴_H28_06_21.html',
+  '洪水履歴_H28_08_29.html',
+  '洪水履歴_H28_09_18.html',
+  '洪水履歴_H28_09_28.html',
+  '洪水履歴_H29_04_17.html',
+  '洪水履歴_H29_07_04.html',
+  '洪水履歴_H29_08_08.html',
+  '洪水履歴_H29_08_18.html',
+  '洪水履歴_H29_09_17.html',
+  '洪水履歴_H29_10_22.html',
+  '洪水履歴_H29_10_29.html',
+  '洪水履歴_H30_03_05.html',
+  '洪水履歴_H30_04_25.html',
+  '洪水履歴_H30_07_05.html',
+  '洪水履歴_H30_08_24.html',
+  '洪水履歴_H30_09_08.html',
+  '洪水履歴_H30_09_30.html',
+  '洪水履歴_R02_06_13.html',
+  '洪水履歴_R02_06_19.html',
+  '洪水履歴_R02_07_06.html',
+  '洪水履歴_R02_07_10.html',
+  '洪水履歴_R02_07_14.html',
+  '洪水履歴_R02_07_25.html',
+  '洪水履歴_R03_05_21.html',
+  '洪水履歴_R03_07_07.html',
+  '洪水履歴_R03_08_13.html',
+  '洪水履歴_R03_08_17.html',
+  '洪水履歴_R03_09_09.html',
+  '洪水履歴_R04_04_29.html',
+  '洪水履歴_R04_07_03.html',
+  '洪水履歴_R04_07_19.html',
+  '洪水履歴_R04_09_19.html',
+  '洪水履歴_R06_04_09.html',
+  '洪水履歴_R06_05_28.html',
+  '洪水履歴_R06_06_28.html',
+]);
+
+const events = [
+  {date:'H28.04.13', q:1054.63, r6:47.8,  rc:67.5,  ty:false, dry:2,    q0:null, html:'洪水履歴_H28_04_13.html', op:'操作記録2016年04月13日.pdf', fl:'放流の概要2016年04月13日.pdf'},
+  {date:'H28.05.16', q:593.16,  r6:51.1,  rc:58.7,  ty:false, dry:2,    q0:null, html:'洪水履歴_H28_05_16.html', op:'操作記録2016年05月16日.pdf', fl:'放流の概要2016年05月16日.pdf'},
+  {date:'H28.06.21', q:483.7,   r6:13.2,  rc:27.1,  ty:false, dry:0,    q0:null, html:'洪水履歴_H28_06_21.html', op:'操作記録2016年06月21日.pdf', fl:'放流の概要2016年06月21日.pdf'},
+  {date:'H28.08.29', q:493.26,  r6:39.7,  rc:74.4,  ty:false, dry:20,   q0:null, html:'洪水履歴_H28_08_29.html', op:'操作記録2016年08月29日.pdf', fl:'放流の概要2016年08月29日.pdf'},
+  {date:'H28.09.18', q:1656.9,  r6:42.0,  rc:198.0, ty:false, dry:4,    q0:null, html:'洪水履歴_H28_09_18.html', op:'操作記録2016年09月18日.pdf', fl:'放流の概要2016年09月18日.pdf'},
+  {date:'H28.09.28', q:875.53,  r6:38.3,  rc:82.4,  ty:true,  dry:0,    q0:null, html:'洪水履歴_H28_09_28.html', op:'操作記録2016年09月28日.pdf', fl:'放流の概要2016年09月28日.pdf'},
+  {date:'H29.04.17', q:1290.45, r6:46.9,  rc:79.6,  ty:false, dry:5,    q0:null, html:'洪水履歴_H29_04_17.html', op:'操作記録2017年04月17日.pdf', fl:'放流の概要2017年04月17日.pdf'},
+  {date:'H29.07.04', q:475.62,  r6:42.4,  rc:66.6,  ty:true,  dry:2,    q0:null, html:'洪水履歴_H29_07_04.html', op:'操作記録2017年07月04日.pdf', fl:'放流の概要2017年07月04日.pdf'},
+  {date:'H29.08.08', q:476.62,  r6:42.7,  rc:73.0,  ty:true,  dry:2,    q0:null, html:'洪水履歴_H29_08_08.html', op:'操作記録2017年08月08日.pdf', fl:'放流の概要2017年08月08日.pdf'},
+  {date:'H29.08.18', q:735.68,  r6:44.5,  rc:56.9,  ty:false, dry:2,    q0:null, html:'洪水履歴_H29_08_18.html', op:'操作記録2017年08月18日.pdf', fl:'放流の概要2017年08月18日.pdf'},
+  {date:'H29.09.17', q:2089.38, r6:93.0,  rc:96.3,  ty:false, dry:3,    q0:null, html:'洪水履歴_H29_09_17.html', op:'操作記録2017年09月17日.pdf', fl:'放流の概要2017年09月17日.pdf'},
+  {date:'H29.10.22', q:3714.46, r6:23.7,  rc:188.2, ty:true,  dry:0,    q0:null, html:'洪水履歴_H29_10_22.html', op:'操作記録2017年10月22日.pdf', fl:'放流の概要2017年10月22日.pdf'},
+  {date:'H29.10.29', q:566.15,  r6:36.9,  rc:59.6,  ty:true,  dry:5,    q0:null, html:'洪水履歴_H29_10_29.html', op:'操作記録2017年10月29日.pdf', fl:'放流の概要2017年10月29日.pdf'},
+  {date:'H30.03.05', q:394.0,   r6:39.3,  rc:54.0,  ty:false, dry:3,    q0:null, html:'洪水履歴_H30_03_05.html', op:'操作記録2018年03月05日.pdf', fl:'放流の概要2018年03月05日.pdf'},
+  {date:'H30.04.25', q:1330.71, r6:54.6,  rc:86.5,  ty:false, dry:8,    q0:null, html:'洪水履歴_H30_04_25.html', op:'操作記録2018年04月25日.pdf', fl:'放流の概要2018年04月25日.pdf'},
+  {date:'H30.07.05', q:5161.78, r6:17.4,  rc:425.3, ty:false, dry:3,    q0:null, html:'洪水履歴_H30_07_05.html', op:'操作記録2018年07月05日.pdf', fl:'放流の概要2018年07月05日.pdf'},
+  {date:'H30.08.24', q:1472.22, r6:112.8, rc:115.7, ty:true,  dry:7,    q0:null, html:'洪水履歴_H30_08_24.html', op:'操作記録2018年08月24日.pdf', fl:'放流の概要2018年08月24日.pdf'},
+  {date:'H30.09.08', q:569.85,  r6:26.7,  rc:135.2, ty:false, dry:1,    q0:null, html:'洪水履歴_H30_09_08.html', op:'操作記録2018年09月08日.pdf', fl:'放流の概要2018年09月08日.pdf'},
+  {date:'H30.09.30', q:1748.68, r6:46.6,  rc:112.6, ty:true,  dry:1,    q0:null, html:'洪水履歴_H30_09_30.html', op:'操作記録2018年09月30日.pdf', fl:'放流の概要2018年09月30日.pdf'},
+  {date:'R2.06.13',  q:922.78,  r6:33.6,  rc:121.0, ty:false, dry:0,    q0:null, html:'洪水履歴_R02_06_13.html', op:'操作記録2020年06月13日.pdf', fl:'放流の概要2020年06月13日.pdf'},
+  {date:'R2.06.19',  q:759.69,  r6:28.6,  rc:69.6,  ty:false, dry:3,    q0:null, html:'洪水履歴_R02_06_19.html', op:'操作記録2020年06月19日.pdf', fl:'放流の概要2020年06月19日.pdf'},
+  {date:'R2.07.06',  q:1476.42, r6:21.9,  rc:102.4, ty:false, dry:1,    q0:null, html:'洪水履歴_R02_07_06.html', op:'操作記録2020年07月06日.pdf', fl:'放流の概要2020年07月06日.pdf'},
+  {date:'R2.07.10',  q:389.31,  r6:14.6,  rc:50.5,  ty:false, dry:1,    q0:null, html:'洪水履歴_R02_07_10.html', op:'操作記録2020年07月10日.pdf', fl:'放流の概要2020年07月10日.pdf'},
+  {date:'R2.07.14',  q:919.58,  r6:26.0,  rc:63.6,  ty:false, dry:1,    q0:null, html:'洪水履歴_R02_07_14.html', op:'操作記録2020年07月14日.pdf', fl:'放流の概要2020年07月14日.pdf'},
+  {date:'R2.07.25',  q:466.27,  r6:34.5,  rc:56.0,  ty:false, dry:9,    q0:null, html:'洪水履歴_R02_07_25.html', op:'操作記録2020年07月25日.pdf', fl:'放流の概要2020年07月25日.pdf'},
+  {date:'R3.05.21',  q:736.95,  r6:26.6,  rc:69.9,  ty:false, dry:2,    q0:null, html:'洪水履歴_R03_05_21.html', op:'操作記録2021年05月21日.pdf', fl:'放流の概要2021年05月21日.pdf'},
+  {date:'R3.07.07',  q:2021.38, r6:48.0,  rc:164.0, ty:false, dry:4,    q0:null, html:'洪水履歴_R03_07_07.html', op:'操作記録2021年07月07日.pdf', fl:'放流の概要2021年07月07日.pdf'},
+  {date:'R3.08.13',  q:1467.77, r6:39.5,  rc:206.5, ty:false, dry:2,    q0:null, html:'洪水履歴_R03_08_13.html', op:'操作記録2021年08月13日.pdf', fl:'放流の概要2021年08月13日.pdf'},
+  {date:'R3.08.17',  q:630.75,  r6:20.0,  rc:70.5,  ty:false, dry:1,    q0:null, html:'洪水履歴_R03_08_17.html', op:'操作記録2021年08月17日.pdf', fl:'放流の概要2021年08月17日.pdf'},
+  {date:'R3.09.09',  q:627.24,  r6:43.3,  rc:39.6,  ty:false, dry:3,    q0:null, html:'洪水履歴_R03_09_09.html', op:'操作記録2021年09月09日.pdf', fl:'放流の概要2021年09月09日.pdf'},
+  {date:'R4.04.29',  q:470.21,  r6:46.5,  rc:47.9,  ty:false, dry:1,    q0:null, html:'洪水履歴_R04_04_29.html', op:'操作記録2022年04月29日.pdf', fl:'放流の概要2022年04月29日.pdf'},
+  {date:'R4.07.03',  q:482.93,  r6:35.5,  rc:54.1,  ty:false, dry:2,    q0:null, html:'洪水履歴_R04_07_03.html', op:'操作記録2022年07月03日.pdf', fl:'放流の概要2022年07月03日.pdf'},
+  {date:'R4.07.19',  q:403.38,  r6:24.5,  rc:59.4,  ty:false, dry:5,    q0:null, html:'洪水履歴_R04_07_19.html', op:'操作記録2022年07月19日.pdf', fl:'放流の概要2022年07月19日.pdf'},
+  {date:'R4.09.19',  q:458.41,  r6:65.0,  rc:71.1,  ty:true,  dry:16,   q0:null, html:'洪水履歴_R04_09_19.html', op:'操作記録2022年09月19日.pdf', fl:'放流の概要2022年09月19日.pdf'},
+  {date:'R5.04.07',  q:631.78,  r6:null,  rc:67.9,  ty:false, dry:null, q0:null, html:'洪水履歴_R05_04_07.html', op:'操作記録2023年04月07日.pdf', fl:'放流の概要2023年04月07日.pdf'},
+  {date:'R5.05.07',  q:2628.6,  r6:null,  rc:123.6, ty:false, dry:null, q0:null, html:'洪水履歴_R05_05_07.html', op:'操作記録2023年05月07日.pdf', fl:'放流の概要2023年05月07日.pdf'},
+  {date:'R5.06.02',  q:1673.07, r6:null,  rc:89.9,  ty:false, dry:null, q0:null, html:'洪水履歴_R05_06_02.html', op:'操作記録2023年06月02日.pdf', fl:'放流の概要2023年06月02日.pdf'},
+  {date:'R6.04.09',  q:539.27,  r6:50.3,  rc:52.9,  ty:false, dry:4,    q0:null, html:'洪水履歴_R06_04_09.html', op:'操作記録2024年04月09日.pdf', fl:'放流の概要2024年04月09日.pdf'},
+  {date:'R6.05.28',  q:3607.08, r6:63.0,  rc:152.2, ty:false, dry:13,   q0:null, html:'洪水履歴_R06_05_28.html', op:'操作記録2024年05月28日.pdf', fl:'放流の概要2024年05月28日.pdf'},
+  {date:'R6.06.28',  q:724.19,  r6:null,  rc:63.5,  ty:false, dry:3,    q0:null, html:'洪水履歴_R06_06_28.html', op:'操作記録2024年06月28日.pdf', fl:'放流の概要2024年06月28日.pdf'},
+  {date:'R6.11.02',  q:2358.61, r6:null,  rc:114.8, ty:true,  dry:1,    q0:null, html:'洪水履歴_R06_11_02.html', op:'操作記録2024年11月02日.pdf', fl:'放流の概要2024年11月02日.pdf'},
+];
+
+const TOTAL = events.length;
+
+// 選択肢生成（0から指定maxまで5刻み）
+function makeOptions(selId, max, defaultVal) {
+  const sel = document.getElementById(selId);
+  for (let v = 0; v <= max; v += 5) {
+    const opt = document.createElement('option');
+    opt.value = v;
+    opt.textContent = v;
+    if (v === defaultVal) opt.selected = true;
+    sel.appendChild(opt);
+  }
+}
+
+makeOptions('sel-r6min',  200, 0);
+makeOptions('sel-r6max',  200, 60);
+makeOptions('sel-rcmin',  250, 0);
+makeOptions('sel-rcmax',  250, 100);
+makeOptions('sel-q0min',  250, 0);
+makeOptions('sel-q0max',  250, 50);
+
+function fmt(v, d=1){ return v==null ? '―' : v.toFixed(d); }
+
+function buildRows(){
+  const tbody = document.getElementById('tbody');
+  tbody.innerHTML = '';
+  events.forEach((e,idx) => {
+    const has = AVAILABLE_HTML.has(e.html);
+    const tr = document.createElement('tr');
+    tr.className = has ? 'has-html' : 'no-html';
+    tr.dataset.idx = idx;
+    const hL = has ? `<a class="link-html" href="${BASE}${e.html}" target="_blank">流量表</a>` : `<a class="link-na">流量表</a>`;
+    const oL = has ? `<a class="link-pdf-op" href="${BASE}${e.op}" target="_blank">操作記録</a>` : `<a class="link-na">操作記録</a>`;
+    const fL = has ? `<a class="link-pdf-fl" href="${BASE}${e.fl}" target="_blank">放流概要</a>` : `<a class="link-na">放流概要</a>`;
+    tr.innerHTML = `
+      <td class="date-cell">${e.date}</td>
+      <td class="q-cell">${fmt(e.q)}</td>
+      <td class="rain-cell">${fmt(e.r6)}</td>
+      <td class="rain-cell">${fmt(e.rc)}</td>
+      <td class="typhoon-cell">${e.ty ? '🌀' : ''}</td>
+      <td class="dry-cell">${e.dry==null ? '―' : e.dry}</td>
+      <td class="link-cell">${hL}${oL}${fL}</td>`;
+    tbody.appendChild(tr);
+  });
+  updateCount();
+}
+
+function applyFilters(){
+  const ty   = document.getElementById('chk-typhoon').checked;
+  const r6n  = +document.getElementById('sel-r6min').value;
+  const r6x  = +document.getElementById('sel-r6max').value;
+  const rcn  = +document.getElementById('sel-rcmin').value;
+  const rcx  = +document.getElementById('sel-rcmax').value;
+  const q0n  = +document.getElementById('sel-q0min').value;
+  const q0x  = +document.getElementById('sel-q0max').value;
+  const dry  = document.getElementById('sel-dry').value;
+
+  document.querySelectorAll('#tbody tr').forEach(tr => {
+    const e = events[+tr.dataset.idx];
+    let show = true;
+    if(ty && !e.ty) show = false;
+    if(e.r6!=null && (e.r6 < r6n || e.r6 > r6x)) show = false;
+    if(e.rc!=null && (e.rc < rcn || e.rc > rcx)) show = false;
+    if(e.q0!=null && (e.q0 < q0n || e.q0 > q0x)) show = false;
+    if(dry !== '' && (e.dry==null || e.dry > +dry)) show = false;
+    tr.classList.toggle('hidden', !show);
+  });
+  updateCount();
+}
+
+function updateCount(){
+  document.getElementById('count').textContent = document.querySelectorAll('#tbody tr:not(.hidden)').length;
+  document.getElementById('total').textContent = TOTAL;
+}
+
+function resetFilters(){
+  document.getElementById('chk-typhoon').checked = false;
+  document.getElementById('sel-r6min').value  = 0;
+  document.getElementById('sel-r6max').value  = 60;
+  document.getElementById('sel-rcmin').value  = 0;
+  document.getElementById('sel-rcmax').value  = 100;
+  document.getElementById('sel-q0min').value  = 0;
+  document.getElementById('sel-q0max').value  = 50;
+  document.getElementById('sel-dry').value    = '';
+  applyFilters();
+}
+
+['sel-r6min','sel-r6max','sel-rcmin','sel-rcmax','sel-q0min','sel-q0max','sel-dry'].forEach(id => {
+  document.getElementById(id).addEventListener('change', applyFilters);
+});
+document.getElementById('chk-typhoon').addEventListener('change', applyFilters);
+document.getElementById('tbody').addEventListener('click', e => {
+  const tr = e.target.closest('tr');
+  if(!tr || !tr.classList.contains('has-html') || e.target.tagName==='A') return;
+  window.open(BASE + events[+tr.dataset.idx].html, '_blank');
+});
+
+buildRows();
+</script>
+</body>
+</html>
